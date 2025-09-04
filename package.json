@@ -34,7 +34,8 @@
         "express": "^5.1.0",
         "helmet": "^8.1.0",
         "jsonwebtoken": "^9.0.2",
-        "mongoose": "^8.18.0"
+        "mongoose": "^8.18.0",
+        "zod": "^4.1.5"
     },
     "devDependencies": {
         "eslint": "^8.57.0",
