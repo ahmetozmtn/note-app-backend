@@ -3,6 +3,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 import connectDB from './config/db.js';
+import authRoutes from './routes/auth.routes.js';
 
 const app = express();
 
@@ -23,5 +24,7 @@ connectDB();
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
 });
+
+app.use('/api/auth', authRoutes);
 
 export default app;

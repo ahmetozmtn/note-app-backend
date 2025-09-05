@@ -1,10 +1,18 @@
-const validationMiddleware = schema => (req, res, next) => {
+import { ZodError } from 'zod';
+
+export const validationMiddleware = schema => (req, res, next) => {
     try {
-        schema.parse(req.body);
+        const parsed = schema.parse(req.body);
+        req.body = parsed; // clean data
         next();
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        if (error instanceof ZodError) {
+            return res.status(400).json({
+                error: 'ValidationError',
+                details: error.flatten().fieldErrors,
+            });
+        }
+        next(error); // başka tip hata varsa global handler'a yolla
     }
 };
-
-export default validationMiddleware;
+// export default validationMiddleware;
