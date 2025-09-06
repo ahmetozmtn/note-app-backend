@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 
 import User from '../models/user.model.js';
+import { generateToken } from '../utils/token.js';
 
 export const register = async (req, res) => {
     try {
@@ -16,12 +17,14 @@ export const register = async (req, res) => {
             password: hashedPassword,
         });
         delete user.password;
+        const token = generateToken({ id: user._id });
         res.status(201).json({
             message: 'User registered',
             data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                token: token,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
@@ -37,8 +40,8 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log(req.body);
         const user = await User.findOne({ email });
+        const token = generateToken({ id: user._id });
         if (!user) {
             return res
                 .status(401)
@@ -56,6 +59,7 @@ export const login = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                token: token,
             },
         });
     } catch (error) {
