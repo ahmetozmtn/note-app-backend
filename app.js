@@ -2,8 +2,10 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
+
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
+import noteRoutes from './routes/note.routes.js';
 
 const app = express();
 
@@ -26,5 +28,5 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-
+app.use('/api/notes', noteRoutes);
 export default app;
