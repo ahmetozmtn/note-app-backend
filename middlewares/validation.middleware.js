@@ -16,3 +16,19 @@ export const validationMiddleware = schema => (req, res, next) => {
     }
 };
 // export default validationMiddleware;
+
+export const validationMiddlewareParams = schema => (req, res, next) => {
+    try {
+        const parsed = schema.parse(req.params);
+        req.params = parsed;
+        next();
+    } catch (error) {
+        if (error instanceof ZodError) {
+            return res.status(400).json({
+                error: 'ValidationError',
+                details: error.flatten().fieldErrors,
+            });
+        }
+        next(error);
+    }
+};
