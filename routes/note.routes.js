@@ -1,7 +1,18 @@
 import express from 'express';
-import { createNote, getNotes } from '../controllers/note.controller.js';
-import { validationMiddleware } from '../middlewares/validation.middleware.js';
-import { createNoteSchema } from '../validation/validation.js';
+
+import {
+    createNote,
+    getNotes,
+    getNoteById,
+} from '../controllers/note.controller.js';
+import {
+    validationMiddleware,
+    validationMiddlewareParams,
+} from '../middlewares/validation.middleware.js';
+import {
+    createNoteSchema,
+    getNoteByIdSchema,
+} from '../validation/validation.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
@@ -13,5 +24,10 @@ router.post(
     createNote
 );
 router.get('/', authMiddleware, getNotes);
-
+router.get(
+    '/:id',
+    authMiddleware,
+    validationMiddlewareParams(getNoteByIdSchema),
+    getNoteById
+);
 export default router;

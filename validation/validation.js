@@ -42,3 +42,10 @@ export const updateNoteSchema = z.object({
     tags: z.array(z.string()).optional(),
     color: z.string().default('#000000').optional(),
 });
+
+export const getNoteByIdSchema = z.object({
+    id: z
+        .string()
+        .trim()
+        .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID'),
+});
