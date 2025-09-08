@@ -4,6 +4,8 @@ import {
     createNote,
     getNotes,
     getNoteById,
+    updateNote,
+    deleteNote,
 } from '../controllers/note.controller.js';
 import {
     validationMiddleware,
@@ -12,6 +14,8 @@ import {
 import {
     createNoteSchema,
     getNoteByIdSchema,
+    updateNoteSchema,
+    deleteNoteSchema,
 } from '../validation/validation.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
@@ -29,5 +33,17 @@ router.get(
     authMiddleware,
     validationMiddlewareParams(getNoteByIdSchema),
     getNoteById
+);
+router.put(
+    '/:id',
+    authMiddleware,
+    validationMiddleware(updateNoteSchema),
+    updateNote
+);
+router.delete(
+    '/:id',
+    authMiddleware,
+    validationMiddlewareParams(deleteNoteSchema),
+    deleteNote
 );
 export default router;

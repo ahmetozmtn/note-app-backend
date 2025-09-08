@@ -58,3 +58,52 @@ export const getNoteById = async (req, res) => {
         });
     }
 };
+
+// Note Update
+
+export const updateNote = async (req, res) => {
+    try {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+        const { title, content, tags, color } = req.body;
+        const updatedNote = await Note.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                content,
+                tags,
+                color,
+            },
+            { new: true }
+        );
+        res.status(200).json({
+            message: 'Note updated',
+            data: updatedNote,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};
+
+// Note Delete
+
+export const deleteNote = async (req, res) => {
+    try {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+        await Note.findByIdAndDelete(req.params.id);
+        res.status(200).json({ message: 'Note deleted' });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};

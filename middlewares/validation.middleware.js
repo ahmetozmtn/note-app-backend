@@ -3,7 +3,6 @@ import { ZodError } from 'zod';
 export const validationMiddleware = schema => (req, res, next) => {
     try {
         const parsed = schema.parse(req.body);
-        console.log(parsed);
         req.body = parsed; // clean data
         next();
     } catch (error) {

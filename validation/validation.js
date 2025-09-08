@@ -49,3 +49,10 @@ export const getNoteByIdSchema = z.object({
         .trim()
         .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID'),
 });
+
+export const deleteNoteSchema = z.object({
+    id: z
+        .string()
+        .trim()
+        .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID'),
+});
