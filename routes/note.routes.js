@@ -7,6 +7,7 @@ import {
     updateNote,
     deleteNote,
     queryNotes,
+    searchNotes,
 } from '../controllers/note.controller.js';
 import {
     validationMiddleware,
@@ -23,6 +24,7 @@ import { authMiddleware } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 
 router.get('/query', authMiddleware, queryNotes);
+router.get('/search', authMiddleware, searchNotes);
 
 router.post(
     '/',

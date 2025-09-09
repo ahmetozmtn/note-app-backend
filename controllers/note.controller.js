@@ -131,3 +131,32 @@ export const queryNotes = async (req, res) => {
         });
     }
 };
+
+// Search Notes
+
+export const searchNotes = async (req, res) => {
+    try {
+        const { query } = req.query;
+        if (!query) {
+            return res.status(400).json({ message: 'Query is required' });
+        }
+        const notes = await Note.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { content: { $regex: query, $options: 'i' } },
+            ],
+        });
+        if (notes.length === 0) {
+            return res.status(404).json({ message: 'No notes found' });
+        }
+        res.status(200).json({
+            message: 'Notes fetched',
+            data: notes,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};
