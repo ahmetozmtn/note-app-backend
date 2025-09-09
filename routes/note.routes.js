@@ -6,6 +6,7 @@ import {
     getNoteById,
     updateNote,
     deleteNote,
+    queryNotes,
 } from '../controllers/note.controller.js';
 import {
     validationMiddleware,
@@ -20,6 +21,8 @@ import {
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
+
+router.get('/query', authMiddleware, queryNotes);
 
 router.post(
     '/',
@@ -46,4 +49,5 @@ router.delete(
     validationMiddlewareParams(deleteNoteSchema),
     deleteNote
 );
+
 export default router;

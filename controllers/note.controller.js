@@ -107,3 +107,27 @@ export const deleteNote = async (req, res) => {
         });
     }
 };
+
+// Note Query
+
+export const queryNotes = async (req, res) => {
+    try {
+        const { tag } = req.query;
+        if (!tag) {
+            return res.status(400).json({ message: 'Tags are required' });
+        }
+        const notes = await Note.find({ tags: { $in: tag } });
+        if (notes.length === 0) {
+            return res.status(404).json({ message: 'No notes found' });
+        }
+        res.status(200).json({
+            message: 'Notes fetched',
+            data: notes,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};
