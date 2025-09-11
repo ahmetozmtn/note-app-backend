@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/user.model.js';
 import { generateToken } from '../utils/token.js';
 
-export const register = async (req, res) => {
+export const register = async (req, res, next) => {
     try {
         const { name, email, password } = req.body;
         const userMailCheck = await User.findOne({ email });
@@ -30,14 +30,11 @@ export const register = async (req, res) => {
             },
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
-export const login = async (req, res) => {
+export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
@@ -63,9 +60,6 @@ export const login = async (req, res) => {
             },
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
