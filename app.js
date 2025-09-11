@@ -6,6 +6,7 @@ import helmet from 'helmet';
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
+import { requestLogger } from './middlewares/logger.middleware.js';
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(helmet());
+app.use(requestLogger);
 // Connect to MongoDB
 connectDB();
 
