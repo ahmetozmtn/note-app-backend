@@ -26,12 +26,6 @@ app.use(requestLogger);
 // Connect to MongoDB
 connectDB();
 
-app.get('/test-error', (req, res, next) => {
-    const error = new Error('This is a test error 🚨');
-    error.status = 500;
-    next(error);
-});
-
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
 });
