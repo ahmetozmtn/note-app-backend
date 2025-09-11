@@ -1,7 +1,7 @@
 import Note from '../models/note.model.js';
 
 // Note Create
-export const createNote = async (req, res) => {
+export const createNote = async (req, res, next) => {
     try {
         const { title, content, tags, color } = req.body;
         const note = await Note.create({
@@ -16,15 +16,12 @@ export const createNote = async (req, res) => {
             data: note,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Note Get
-export const getNotes = async (req, res) => {
+export const getNotes = async (req, res, next) => {
     try {
         const notes = await Note.find({ userId: req.user.id });
         res.status(200).json({
@@ -32,16 +29,13 @@ export const getNotes = async (req, res) => {
             data: notes,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Note Get By Id
 
-export const getNoteById = async (req, res) => {
+export const getNoteById = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
@@ -52,16 +46,13 @@ export const getNoteById = async (req, res) => {
             data: note,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Note Update
 
-export const updateNote = async (req, res) => {
+export const updateNote = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
@@ -83,16 +74,13 @@ export const updateNote = async (req, res) => {
             data: updatedNote,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Note Delete
 
-export const deleteNote = async (req, res) => {
+export const deleteNote = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
@@ -101,16 +89,13 @@ export const deleteNote = async (req, res) => {
         await Note.findByIdAndDelete(req.params.id);
         res.status(200).json({ message: 'Note deleted' });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Note Query
 
-export const queryNotes = async (req, res) => {
+export const queryNotes = async (req, res, next) => {
     try {
         const { tag } = req.query;
         if (!tag) {
@@ -125,16 +110,13 @@ export const queryNotes = async (req, res) => {
             data: notes,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };
 
 // Search Notes
 
-export const searchNotes = async (req, res) => {
+export const searchNotes = async (req, res, next) => {
     try {
         const { query } = req.query;
         if (!query) {
@@ -154,9 +136,6 @@ export const searchNotes = async (req, res) => {
             data: notes,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'Internal server error',
-            error: error.message,
-        });
+        next(error);
     }
 };

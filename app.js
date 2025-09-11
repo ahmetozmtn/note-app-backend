@@ -7,6 +7,7 @@ import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
+import { errorMiddleware } from './middlewares/error.middleware.js';
 
 const app = express();
 
@@ -25,11 +26,19 @@ app.use(requestLogger);
 // Connect to MongoDB
 connectDB();
 
+app.get('/test-error', (req, res, next) => {
+    const error = new Error('This is a test error 🚨');
+    error.status = 500;
+    next(error);
+});
+
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
 });
 
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
+
+app.use(errorMiddleware);
 
 export default app;
