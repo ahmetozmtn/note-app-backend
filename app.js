@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
+import { notFoundMiddleware } from './middlewares/notFound.middleware.js';
 
 const app = express();
 
@@ -34,5 +35,5 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 
 app.use(errorMiddleware);
-
+app.use(notFoundMiddleware);
 export default app;
