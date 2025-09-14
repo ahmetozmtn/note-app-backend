@@ -36,6 +36,7 @@
         "jsonwebtoken": "^9.0.2",
         "mongoose": "^8.18.0",
         "winston": "^3.17.0",
+        "winston-mongodb": "^7.0.1",
         "zod": "^4.1.5"
     },
     "devDependencies": {
