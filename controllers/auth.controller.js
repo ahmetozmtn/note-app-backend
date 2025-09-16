@@ -16,7 +16,6 @@ export const register = async (req, res, next) => {
             email,
             password: hashedPassword,
         });
-        delete user.password;
         const token = generateToken({ id: user._id });
         res.status(201).json({
             message: 'User registered',
@@ -38,12 +37,12 @@ export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email });
-        const token = generateToken({ id: user._id });
         if (!user) {
             return res
                 .status(401)
                 .json({ message: 'Invalid email or password' });
         }
+        const token = generateToken({ id: user._id });
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res
