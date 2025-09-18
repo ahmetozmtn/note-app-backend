@@ -20,6 +20,7 @@ import {
     deleteNoteSchema,
 } from '../validation/validation.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { noteOwner } from '../middlewares/noteOwner.middleware.js';
 
 const router = express.Router();
 
@@ -37,18 +38,21 @@ router.get(
     '/:id',
     authMiddleware,
     validationMiddlewareParams(getNoteByIdSchema),
+    noteOwner,
     getNoteById
 );
 router.put(
     '/:id',
     authMiddleware,
     validationMiddleware(updateNoteSchema),
+    noteOwner,
     updateNote
 );
 router.delete(
     '/:id',
     authMiddleware,
     validationMiddlewareParams(deleteNoteSchema),
+    noteOwner,
     deleteNote
 );
 
