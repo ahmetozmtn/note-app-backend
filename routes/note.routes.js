@@ -20,11 +20,15 @@ import {
     deleteNoteSchema,
 } from '../validation/validation.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import {
+    noteOwnerById,
+    noteOwnerGetAllNotes,
+} from '../middlewares/noteOwner.middleware.js';
 
 const router = express.Router();
 
-router.get('/query', authMiddleware, queryNotes);
-router.get('/search', authMiddleware, searchNotes);
+router.get('/query', authMiddleware, noteOwnerGetAllNotes, queryNotes);
+router.get('/search', authMiddleware, noteOwnerGetAllNotes, searchNotes);
 
 router.post(
     '/',
@@ -32,23 +36,26 @@ router.post(
     validationMiddleware(createNoteSchema),
     createNote
 );
-router.get('/', authMiddleware, getNotes);
+router.get('/', authMiddleware, noteOwnerGetAllNotes, getNotes);
 router.get(
     '/:id',
     authMiddleware,
     validationMiddlewareParams(getNoteByIdSchema),
+    noteOwnerById,
     getNoteById
 );
 router.put(
     '/:id',
     authMiddleware,
     validationMiddleware(updateNoteSchema),
+    noteOwnerById,
     updateNote
 );
 router.delete(
     '/:id',
     authMiddleware,
     validationMiddlewareParams(deleteNoteSchema),
+    noteOwnerById,
     deleteNote
 );
 
