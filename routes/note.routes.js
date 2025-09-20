@@ -47,6 +47,7 @@ router.get(
 router.put(
     '/:id',
     authMiddleware,
+    validationMiddlewareParams(getNoteByIdSchema),
     validationMiddleware(updateNoteSchema),
     noteOwnerById,
     updateNote
