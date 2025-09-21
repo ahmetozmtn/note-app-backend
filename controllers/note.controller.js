@@ -103,7 +103,10 @@ export const queryNotes = async (req, res, next) => {
         }
         const notes = await Note.find({ tags: { $in: tag } });
         if (notes.length === 0) {
-            return res.status(404).json({ message: 'No notes found' });
+            return res.status(200).json({
+                message: 'No notes found',
+                data: [],
+            });
         }
         res.status(200).json({
             message: 'Notes fetched',
@@ -129,7 +132,10 @@ export const searchNotes = async (req, res, next) => {
             ],
         });
         if (notes.length === 0) {
-            return res.status(404).json({ message: 'No notes found' });
+            return res.status(200).json({
+                message: 'No notes found',
+                data: [],
+            });
         }
         res.status(200).json({
             message: 'Notes fetched',
