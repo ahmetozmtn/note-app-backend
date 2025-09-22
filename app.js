@@ -35,7 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 
 // Error Middlewares
-app.use(errorMiddleware);
 app.use(notFoundMiddleware);
+app.use(errorMiddleware);
 
 export default app;
