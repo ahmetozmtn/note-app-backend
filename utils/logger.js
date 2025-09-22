@@ -20,7 +20,6 @@ const logger = winston.createLogger({
         new winston.transports.File({ filename: 'logs/combined.log' }),
         new winston.transports.MongoDB({
             db: MONGO_URI,
-            options: { useUnifiedTopology: true },
             collection: 'app_logs',
             level: 'info',
             format: combine(timestamp(), json()),
