@@ -1,5 +1,4 @@
 import express from 'express';
-import bodyParser from 'body-parser';
 import cors from 'cors';
 import helmet from 'helmet';
 
@@ -20,8 +19,8 @@ app.use(
         allowedHeaders: ['Content-Type', 'Authorization'],
     })
 );
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
 app.use(helmet());
 app.use(requestLogger);
 // Connect to MongoDB
