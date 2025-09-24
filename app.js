@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import expressRate from 'express-rate-limit';
 
 import connectDB from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
@@ -26,8 +27,18 @@ app.use(requestLogger);
 // Connect to MongoDB
 connectDB();
 
+// Rate Limiter
+const rateLimiter = expressRate({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: { message: 'Too many requests, please try again later.' },
+});
+
+app.use(rateLimiter);
+
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
+    console.log('Hello World');
 });
 
 app.use('/api/auth', authRoutes);
