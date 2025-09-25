@@ -3,7 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import expressRate from 'express-rate-limit';
 
-import connectDB from './config/db.js';
+import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
