@@ -130,6 +130,7 @@ export const searchNotes = async (req, res, next) => {
                 { title: { $regex: query, $options: 'i' } },
                 { content: { $regex: query, $options: 'i' } },
             ],
+            userId: req.user.id,
         });
         if (notes.length === 0) {
             return res.status(200).json({
