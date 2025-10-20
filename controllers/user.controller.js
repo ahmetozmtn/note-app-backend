@@ -16,3 +16,29 @@ export const getUser = async (req, res, next) => {
         next(error);
     }
 };
+
+// User Update
+
+export const updateUser = async (req, res, next) => {
+    try {
+        const userEmailCheck = await User.findOne({ email: req.body.email });
+        if (userEmailCheck) {
+            return res.status(409).json({ message: 'Email already exists' });
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+        }).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.status(200).json({
+            message: 'User updated',
+            data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
