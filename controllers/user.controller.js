@@ -21,12 +21,14 @@ export const getUser = async (req, res, next) => {
 
 export const updateUser = async (req, res, next) => {
     try {
-        const userEmailCheck = await User.findOne({ email: req.body.email });
+        const { email } = req.body;
+        const { id } = req.params;
+        const userEmailCheck = await User.findOne({ email: email });
         if (userEmailCheck) {
             return res.status(409).json({ message: 'Email already exists' });
         }
 
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+        const user = await User.findByIdAndUpdate(id, req.body, {
             new: true,
         }).select('-password');
 
