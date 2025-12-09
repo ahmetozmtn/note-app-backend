@@ -6,6 +6,7 @@ import expressRate from 'express-rate-limit';
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
+import userRoutes from './routes/user.routes.js';
 import { requestLogger } from './middlewares/logger.middleware.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 import { notFoundMiddleware } from './middlewares/notFound.middleware.js';
@@ -41,6 +42,7 @@ app.get('/', (req, res) => {
     console.log('Hello World');
 });
 
+app.use('/api/users', userRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/notes', noteRoutes);
 

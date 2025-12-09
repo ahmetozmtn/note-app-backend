@@ -25,6 +25,25 @@ export const loginSchema = z
     })
     .strict();
 
+// --- User Schemas ---
+export const updateUserSchema = z
+    .object({
+        name: z.string().trim().min(3, {
+            message: 'Name is required and must be at least 3 characters long',
+        }),
+        email: z.string().trim().email({ message: 'Invalid email address' }),
+    })
+    .strict();
+
+export const paramsIdSchema = z
+    .object({
+        id: z
+            .string()
+            .trim()
+            .regex(/^[0-9a-fA-F]{24}$/, 'Invalid ID'),
+    })
+    .strict();
+
 // --- Note Schemas ---
 
 export const createNoteSchema = z

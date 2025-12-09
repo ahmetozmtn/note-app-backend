@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>Email Doğrulama</title>
+        <style>
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+                    'Helvetica Neue', Arial;
+                background: #f4f6f8;
+                margin: 0;
+                padding: 20px;
+            }
+            .card {
+                max-width: 600px;
+                margin: 24px auto;
+                background: #ffffff;
+                border-radius: 12px;
+                box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+                overflow: hidden;
+            }
+            .header {
+                padding: 24px;
+                text-align: center;
+                background: linear-gradient(90deg, #0b74de, #2fb5ff);
+                color: white;
+            }
+            .header h1 {
+                margin: 0;
+                font-size: 20px;
+                letter-spacing: 0.2px;
+            }
+            .body {
+                padding: 28px;
+                color: #111827;
+                line-height: 1.45;
+            }
+            .greet {
+                font-size: 16px;
+                margin-bottom: 12px;
+            }
+            .msg {
+                font-size: 14px;
+                color: #374151;
+                margin-bottom: 20px;
+            }
+            .btn-wrap {
+                text-align: center;
+                margin-bottom: 18px;
+            }
+            .btn {
+                display: inline-block;
+                text-decoration: none;
+                padding: 12px 20px;
+                border-radius: 8px;
+                background: #0b74de;
+                color: white;
+                font-weight: 600;
+                box-shadow: 0 6px 12px rgba(11, 116, 222, 0.18);
+            }
+            .small {
+                font-size: 12px;
+                color: #6b7280;
+            }
+            .footer {
+                padding: 18px;
+                text-align: center;
+                font-size: 12px;
+                color: #9ca3af;
+            }
+            a.link {
+                color: #0b74de;
+                word-break: break-all;
+            }
+            @media (max-width: 420px) {
+                .body {
+                    padding: 20px;
+                }
+                .header {
+                    padding: 18px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card" role="article" aria-label="Email doğrulama">
+            <div class="header">
+                <h1>Emailinizi Doğrulayın</h1>
+            </div>
+
+            <div class="body">
+                <div class="greet">Merhaba {{name}},</div>
+
+                <div class="msg">
+                    Hesabınızı tamamlamak için aşağıdaki butona tıklayarak
+                    e-posta adresinizi doğrulayın. Bu bağlantı kısa süre içinde
+                    sona erebilir.
+                </div>
+
+                <div class="btn-wrap">
+                    <a
+                        class="btn"
+                        href="{{url}}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >E-postayı Doğrula</a
+                    >
+                </div>
+
+                <div class="small">
+                    Buton çalışmıyorsa şu bağlantıyı tarayıcınıza yapıştırın:
+                    <div>
+                        <a
+                            class="link"
+                            href="{{url}}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >{{url}}</a
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                Eğer bu isteği siz yapmadıysanız, bu e-postayı görmezden
+                gelebilirsiniz.
+            </div>
+        </div>
+    </body>
+</html>

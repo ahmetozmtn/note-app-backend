@@ -1,7 +1,13 @@
 import bcrypt from 'bcrypt';
 
 import User from '../models/user.model.js';
-import { generateToken } from '../utils/token.js';
+import { generateToken, generateEmailToken } from '../utils/token.js';
+import {
+    sendVerificationEmail,
+    sendPasswordResetEmail,
+} from '../utils/email.service.js';
+import { EMAIL_TOKEN_SECRET_KEY } from '../config/env.js';
+import jwt from 'jsonwebtoken';
 
 export const register = async (req, res, next) => {
     try {
@@ -17,6 +23,8 @@ export const register = async (req, res, next) => {
             password: hashedPassword,
         });
         const token = generateToken({ id: user._id });
+        const emailToken = generateEmailToken({ id: user._id });
+        await sendVerificationEmail(email, emailToken);
         res.status(201).json({
             message: 'User registered',
             data: {
@@ -57,6 +65,67 @@ export const login = async (req, res, next) => {
                 email: user.email,
                 token: token,
             },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const verifyEmail = async (req, res, next) => {
+    try {
+        const { token } = req.query;
+        const decoded = jwt.verify(token, EMAIL_TOKEN_SECRET_KEY);
+        const user = await User.findByIdAndUpdate(
+            decoded.id,
+            { isVerified: true },
+            { new: true }
+        ).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        return res.status(200).json({
+            message: 'Email verified',
+            data: user,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const passwordResetEmailSend = async (req, res, next) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const emailToken = generateEmailToken({ id: user._id });
+        await sendPasswordResetEmail(email, emailToken);
+        return res.status(200).json({
+            message: 'Password reset email sent',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const passwordResetConfirmation = async (req, res, next) => {
+    try {
+        const { token } = req.query;
+        const { password } = req.body;
+        const decoded = jwt.verify(token, EMAIL_TOKEN_SECRET_KEY);
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const user = await User.findByIdAndUpdate(
+            decoded.id,
+            { password: hashedPassword },
+            { new: true }
+        ).select('-password');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        return res.status(200).json({
+            message: 'Password reset successful',
         });
     } catch (error) {
         next(error);
