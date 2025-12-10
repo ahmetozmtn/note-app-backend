@@ -8,6 +8,8 @@ import {
     deleteNote,
     queryNotes,
     searchNotes,
+    addFavoritesNotes,
+    favoriteNotes,
 } from '../controllers/note.controller.js';
 import {
     validationMiddleware,
@@ -29,6 +31,23 @@ const router = express.Router();
 
 router.get('/query', authMiddleware, noteOwnerGetAllNotes, queryNotes);
 router.get('/search', authMiddleware, noteOwnerGetAllNotes, searchNotes);
+
+router.get('/favorites/', authMiddleware, noteOwnerGetAllNotes, favoriteNotes);
+router.post(
+    '/favorites/:id',
+    authMiddleware,
+    validationMiddlewareParams(getNoteByIdSchema),
+    noteOwnerById,
+    addFavoritesNotes
+);
+
+router.delete(
+    '/favorites/:id',
+    authMiddleware,
+    validationMiddlewareParams(getNoteByIdSchema),
+    noteOwnerById,
+    removeFavoritesNotes
+);
 
 router.post(
     '/',

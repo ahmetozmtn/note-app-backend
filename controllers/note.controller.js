@@ -146,3 +146,53 @@ export const searchNotes = async (req, res, next) => {
         next(error);
     }
 };
+
+// Note Favorite
+
+export const favoriteNotes = async (req, res, next) => {
+    try {
+        const notes = await Note.find({
+            userId: req.user.id,
+            isFavorites: true,
+        });
+        if (notes.length === 0) {
+            return res.status(200).json({
+                message: 'No favorite notes found',
+                data: [],
+            });
+        }
+        return res.status(200).json({
+            message: 'Favorite notes fetched',
+            data: notes,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const addFavoritesNotes = async (req, res, next) => {
+    try {
+        const note = await Note.findById(req.params.id);
+        console.log(note);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+        await note.updateOne({ isFavorites: true });
+        return res.status(200).json({ message: 'Note added to favorites' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const removeFavoritesNotes = async (req, res, next) => {
+    try {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+        await note.updateOne({ isFavorites: false });
+        return res.status(200).json({ message: 'Note removed from favorites' });
+    } catch (error) {
+        next(error);
+    }
+};

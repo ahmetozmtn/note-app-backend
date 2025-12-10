@@ -11,6 +11,7 @@ const NoteSchema = new mongoose.Schema(
         },
         tags: { type: [String], default: [] },
         color: { type: String, default: '#000000' },
+        isFavorites: { type: Boolean, default: false },
         createdAt: { type: Date, default: Date.now },
         updatedAt: { type: Date, default: Date.now },
     },
