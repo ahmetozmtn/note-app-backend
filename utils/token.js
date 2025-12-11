@@ -28,3 +28,11 @@ export const verifyToken = token => {
         throw new Error(error);
     }
 };
+
+export const verifyEmailToken = token => {
+    try {
+        return jwt.verify(token, EMAIL_TOKEN_SECRET_KEY);
+    } catch (error) {
+        throw new Error(error);
+    }
+};

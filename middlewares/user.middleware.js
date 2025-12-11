@@ -1,6 +1,5 @@
-import jwt from 'jsonwebtoken';
-import { JWT_SECRET_KEY } from '../config/env.js';
 import User from '../models/user.model.js';
+import { verifyToken } from '../utils/token.js';
 
 export const userMiddleware = async (req, res, next) => {
     try {
@@ -8,7 +7,7 @@ export const userMiddleware = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({ message: 'No token provided' });
         }
-        const decoded = jwt.verify(token, JWT_SECRET_KEY);
+        const decoded = verifyToken(token);
         const user = await User.findById(req.params.id);
         if (!user) {
             return res.status(401).json({ message: 'User not found' });

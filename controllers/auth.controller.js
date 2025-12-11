@@ -1,13 +1,15 @@
 import bcrypt from 'bcrypt';
 
 import User from '../models/user.model.js';
-import { generateToken, generateEmailToken } from '../utils/token.js';
+import {
+    generateToken,
+    generateEmailToken,
+    verifyEmailToken,
+} from '../utils/token.js';
 import {
     sendVerificationEmail,
     sendPasswordResetEmail,
 } from '../utils/email.service.js';
-import { EMAIL_TOKEN_SECRET_KEY } from '../config/env.js';
-import jwt from 'jsonwebtoken';
 
 export const register = async (req, res, next) => {
     try {
@@ -74,7 +76,7 @@ export const login = async (req, res, next) => {
 export const verifyEmail = async (req, res, next) => {
     try {
         const { token } = req.query;
-        const decoded = jwt.verify(token, EMAIL_TOKEN_SECRET_KEY);
+        const decoded = verifyEmailToken(token);
         const user = await User.findByIdAndUpdate(
             decoded.id,
             { isVerified: true },
@@ -114,7 +116,7 @@ export const passwordResetConfirmation = async (req, res, next) => {
     try {
         const { token } = req.query;
         const { password } = req.body;
-        const decoded = jwt.verify(token, EMAIL_TOKEN_SECRET_KEY);
+        const decoded = verifyEmailToken(token);
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.findByIdAndUpdate(
             decoded.id,
