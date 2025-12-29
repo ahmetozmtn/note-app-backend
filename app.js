@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import expressRate from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
 
 import { connectDB } from './config/db.js';
 import authRoutes from './routes/auth.routes.js';
@@ -16,11 +17,13 @@ const app = express();
 // Middlewares
 app.use(
     cors({
-        origin: '*',
+        origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
         methods: ['GET', 'POST', 'PUT', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
+        credentials: true, // Cookie'ler için gerekli
     })
 );
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '10mb' }));
 app.use(helmet());

@@ -1,15 +1,49 @@
 import bcrypt from 'bcrypt';
 
 import User from '../models/user.model.js';
+import RefreshToken from '../models/refreshToken.model.js';
 import {
     generateToken,
     generateEmailToken,
     verifyEmailToken,
+    generateRefreshToken,
+    verifyRefreshToken,
+    hashToken,
+    getRefreshTokenExpiry,
 } from '../utils/token.js';
 import {
     sendVerificationEmail,
     sendPasswordResetEmail,
 } from '../utils/email.service.js';
+import {
+    REFRESH_TOKEN_COOKIE_MAX_AGE,
+    COOKIE_SECURE,
+    COOKIE_SAME_SITE,
+} from '../config/env.js';
+
+// Cookie settings
+const cookieOptions = {
+    httpOnly: true,
+    secure: COOKIE_SECURE,
+    sameSite: COOKIE_SAME_SITE,
+    maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
+    path: '/',
+};
+
+// Refresh token create and save to DB
+const createAndSaveRefreshToken = async userId => {
+    const refreshToken = generateRefreshToken({ id: userId });
+    const tokenHash = hashToken(refreshToken);
+    const expiresAt = getRefreshTokenExpiry();
+
+    await RefreshToken.create({
+        userId,
+        tokenHash,
+        expiresAt,
+    });
+
+    return refreshToken;
+};
 
 export const register = async (req, res, next) => {
     try {
@@ -24,16 +58,23 @@ export const register = async (req, res, next) => {
             email,
             password: hashedPassword,
         });
-        const token = generateToken({ id: user._id });
+
+        const accessToken = generateToken({ id: user._id });
+
+        const refreshToken = await createAndSaveRefreshToken(user._id);
+
         const emailToken = generateEmailToken({ id: user._id });
         await sendVerificationEmail(email, emailToken);
+
+        res.cookie('refreshToken', refreshToken, cookieOptions);
+
         res.status(201).json({
             message: 'User registered',
             data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                token: token,
+                accessToken,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
             },
@@ -52,20 +93,27 @@ export const login = async (req, res, next) => {
                 .status(401)
                 .json({ message: 'Invalid email or password' });
         }
-        const token = generateToken({ id: user._id });
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res
                 .status(401)
                 .json({ message: 'Invalid email or password' });
         }
+
+        const accessToken = generateToken({ id: user._id });
+
+        const refreshToken = await createAndSaveRefreshToken(user._id);
+
+        res.cookie('refreshToken', refreshToken, cookieOptions);
+
         return res.status(200).json({
             message: 'Login successful',
             data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                token: token,
+                accessToken,
             },
         });
     } catch (error) {
@@ -128,6 +176,119 @@ export const passwordResetConfirmation = async (req, res, next) => {
         }
         return res.status(200).json({
             message: 'Password reset successful',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Refresh token ile yeni access token al
+export const refreshAccessToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(401).json({ message: 'Refresh token not found' });
+        }
+
+        // Token'ı doğrula
+        let decoded;
+        try {
+            decoded = verifyRefreshToken(refreshToken);
+        } catch {
+            return res
+                .status(401)
+                .json({ message: 'Invalid or expired refresh token' });
+        }
+
+        // Token hash'ini kontrol et
+        const tokenHash = hashToken(refreshToken);
+        const storedToken = await RefreshToken.findOne({
+            userId: decoded.id,
+            tokenHash,
+        });
+
+        if (!storedToken) {
+            return res.status(401).json({ message: 'Refresh token not found' });
+        }
+
+        // Token süresi dolmuş mu kontrol et
+        if (storedToken.isExpired()) {
+            await storedToken.deleteOne();
+            return res.status(401).json({ message: 'Refresh token expired' });
+        }
+
+        // Kullanıcıyı kontrol et
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Eski refresh token'ı sil
+        await storedToken.deleteOne();
+
+        // Yeni access ve refresh token oluştur
+        const newAccessToken = generateToken({ id: user._id });
+        const newRefreshToken = await createAndSaveRefreshToken(user._id);
+
+        // Yeni refresh token'ı cookie'ye yaz
+        res.cookie('refreshToken', newRefreshToken, cookieOptions);
+
+        return res.status(200).json({
+            message: 'Token refreshed successfully',
+            data: {
+                accessToken: newAccessToken,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Logout - Refresh token'ı sil
+export const logout = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies.refreshToken;
+
+        if (refreshToken) {
+            const tokenHash = hashToken(refreshToken);
+            await RefreshToken.findOneAndDelete({ tokenHash });
+        }
+
+        // Cookie'yi temizle
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: COOKIE_SECURE,
+            sameSite: COOKIE_SAME_SITE,
+            path: '/',
+        });
+
+        return res.status(200).json({
+            message: 'Logged out successfully',
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Tüm cihazlardan çıkış yap (tüm refresh token'ları sil)
+export const logoutAll = async (req, res, next) => {
+    try {
+        const userId = req.user.id;
+
+        // Kullanıcının tüm refresh token'larını sil
+        await RefreshToken.revokeAllUserTokens(userId);
+
+        // Cookie'yi temizle
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            secure: COOKIE_SECURE,
+            sameSite: COOKIE_SAME_SITE,
+            path: '/',
+        });
+
+        return res.status(200).json({
+            message: 'Logged out from all devices successfully',
         });
     } catch (error) {
         next(error);

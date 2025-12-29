@@ -1,20 +1,22 @@
 import Note from '../models/note.model.js';
-import { verifyToken } from '../utils/token.js';
 
 export const noteOwnerById = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
+        // req.user is set by authMiddleware
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        const decoded = verifyToken(token);
-        const note = await Note.findById(req.params.id);
-        if (!note) return res.status(404).json({ message: 'Note not found' });
 
-        if (note.userId.toString() !== decoded.id.toString()) {
+        const note = await Note.findById(req.params.id);
+        if (!note) {
+            return res.status(404).json({ message: 'Note not found' });
+        }
+
+        if (note.userId.toString() !== req.user.id.toString()) {
             return res.status(403).json({ message: 'Forbidden' });
         }
 
+        req.note = note;
         next();
     } catch (error) {
         next(error);
@@ -23,15 +25,16 @@ export const noteOwnerById = async (req, res, next) => {
 
 export const noteOwnerGetAllNotes = async (req, res, next) => {
     try {
-        const token = req.headers.authorization.split(' ')[1];
-        if (!token) {
+        if (!req.user || !req.user.id) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
-        const decoded = verifyToken(token);
-        const notes = await Note.find({ userId: decoded.id });
+
+        const notes = await Note.find({ userId: req.user.id });
         if (notes.length === 0) {
             return res.status(404).json({ message: 'No notes found' });
         }
+
+        req.notes = notes;
         next();
     } catch (error) {
         next(error);

@@ -21,3 +21,18 @@ export const EMAIL_PORT = process.env.EMAIL_PORT;
 export const EMAIL_TOKEN_SECRET_KEY = process.env.EMAIL_TOKEN_SECRET_KEY;
 
 export const EMAIL_TOKEN_EXPIRES_IN = process.env.EMAIL_TOKEN_EXPIRES_IN;
+
+// Refresh Token Configuration
+export const REFRESH_TOKEN_SECRET_KEY = process.env.REFRESH_TOKEN_SECRET_KEY;
+
+export const REFRESH_TOKEN_EXPIRES_IN =
+    process.env.REFRESH_TOKEN_EXPIRES_IN || '7d';
+
+export const REFRESH_TOKEN_COOKIE_MAX_AGE =
+    parseInt(process.env.REFRESH_TOKEN_COOKIE_MAX_AGE) ||
+    7 * 24 * 60 * 60 * 1000;
+
+// Cookie Configuration
+export const COOKIE_SECURE = process.env.NODE_ENV === 'production';
+
+export const COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE || 'strict';
