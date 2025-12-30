@@ -17,14 +17,14 @@ import {
 } from '../utils/email.service.js';
 import {
     REFRESH_TOKEN_COOKIE_MAX_AGE,
-    COOKIE_SECURE,
+    NODE_ENV,
     COOKIE_SAME_SITE,
 } from '../config/env.js';
 
 // Cookie settings
 const cookieOptions = {
     httpOnly: true,
-    secure: COOKIE_SECURE,
+    secure: NODE_ENV === 'production',
     sameSite: COOKIE_SAME_SITE,
     maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE,
     path: '/',
@@ -249,7 +249,7 @@ export const logout = async (req, res, next) => {
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: COOKIE_SECURE,
+            secure: NODE_ENV === 'production',
             sameSite: COOKIE_SAME_SITE,
             path: '/',
         });
@@ -270,7 +270,7 @@ export const logoutAll = async (req, res, next) => {
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: COOKIE_SECURE,
+            secure: NODE_ENV === 'production',
             sameSite: COOKIE_SAME_SITE,
             path: '/',
         });
