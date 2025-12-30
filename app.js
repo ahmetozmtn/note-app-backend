@@ -3,8 +3,10 @@ import cors from 'cors';
 import helmet from 'helmet';
 import expressRate from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 
 import { connectDB } from './config/db.js';
+import swaggerSpec from './config/swagger.js';
 import authRoutes from './routes/auth.routes.js';
 import noteRoutes from './routes/note.routes.js';
 import userRoutes from './routes/user.routes.js';
@@ -45,8 +47,10 @@ app.use(rateLimiter);
 
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
-    console.log('Hello World');
 });
+
+// Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);

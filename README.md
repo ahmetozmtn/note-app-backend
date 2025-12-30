@@ -12,6 +12,7 @@ Not uygulaması için RESTful API servisi. Kullanıcı kimlik doğrulama, not y�
 - **Email:** Nodemailer
 - **Güvenlik:** Helmet, CORS, Rate Limiting, bcrypt
 - **Loglama:** Winston
+- **Dokumantasyon:** Swagger/OpenAPI
 - **Konteyner:** Docker, Docker Compose
 
 ## Kurulum
@@ -83,25 +84,27 @@ docker compose down -v
 
 ## API Endpoints
 
-Tüm endpoint'ler `/api` prefix'i ile başlar. Korumalı endpoint'ler `Authorization: Bearer <token>` header'ı gerektirir.
+Tum endpoint'ler `/api/v1` prefix'i ile baslar. Korumali endpoint'ler `Authorization: Bearer <token>` header'i gerektirir.
+
+API dokumantasyonuna erisim: `http://localhost:5000/api-docs`
 
 ### Auth
 
-| Method | Endpoint                                | Açıklama                      | Auth  |
-| ------ | --------------------------------------- | ----------------------------- | ----- |
-| POST   | `/api/auth/register`                    | Yeni kullanıcı kaydı          | Hayır |
-| POST   | `/api/auth/login`                       | Kullanıcı girişi              | Hayır |
-| POST   | `/api/auth/refresh`                     | Access token yenileme         | Hayır |
-| POST   | `/api/auth/logout`                      | Çıkış yap                     | Hayır |
-| POST   | `/api/auth/logout-all`                  | Tüm cihazlardan çıkış         | Evet  |
-| GET    | `/api/auth/verify`                      | Email doğrulama               | Hayır |
-| POST   | `/api/auth/reset-password-email`        | Şifre sıfırlama emaili gönder | Hayır |
-| POST   | `/api/auth/reset-password-confirmation` | Şifre sıfırlama onayı         | Hayır |
+| Method | Endpoint                                   | Aciklama                      | Auth  |
+| ------ | ------------------------------------------ | ----------------------------- | ----- |
+| POST   | `/api/v1/auth/register`                    | Yeni kullanici kaydi          | Hayir |
+| POST   | `/api/v1/auth/login`                       | Kullanici girisi              | Hayir |
+| POST   | `/api/v1/auth/refresh`                     | Access token yenileme         | Hayir |
+| POST   | `/api/v1/auth/logout`                      | Cikis yap                     | Hayir |
+| POST   | `/api/v1/auth/logout-all`                  | Tum cihazlardan cikis         | Evet  |
+| GET    | `/api/v1/auth/verify`                      | Email dogrulama               | Hayir |
+| POST   | `/api/v1/auth/reset-password-email`        | Sifre sifirlama emaili gonder | Hayir |
+| POST   | `/api/v1/auth/reset-password-confirmation` | Sifre sifirlama onayi         | Hayir |
 
 #### Register
 
 ```
-POST /api/auth/register
+POST /api/v1/auth/register
 Content-Type: application/json
 
 {
@@ -114,7 +117,7 @@ Content-Type: application/json
 #### Login
 
 ```
-POST /api/auth/login
+POST /api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -125,15 +128,15 @@ Content-Type: application/json
 
 ### Users
 
-| Method | Endpoint         | Açıklama                       | Auth |
-| ------ | ---------------- | ------------------------------ | ---- |
-| GET    | `/api/users/:id` | Kullanıcı bilgilerini getir    | Evet |
-| PUT    | `/api/users/:id` | Kullanıcı bilgilerini güncelle | Evet |
+| Method | Endpoint            | Aciklama                       | Auth |
+| ------ | ------------------- | ------------------------------ | ---- |
+| GET    | `/api/v1/users/:id` | Kullanici bilgilerini getir    | Evet |
+| PUT    | `/api/v1/users/:id` | Kullanici bilgilerini guncelle | Evet |
 
 #### Update User
 
 ```
-PUT /api/users/:id
+PUT /api/v1/users/:id
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -145,23 +148,23 @@ Content-Type: application/json
 
 ### Notes
 
-| Method | Endpoint                   | Açıklama               | Auth |
-| ------ | -------------------------- | ---------------------- | ---- |
-| GET    | `/api/notes`               | Tüm notları listele    | Evet |
-| POST   | `/api/notes`               | Yeni not oluştur       | Evet |
-| GET    | `/api/notes/:id`           | Tek not getir          | Evet |
-| PUT    | `/api/notes/:id`           | Not güncelle           | Evet |
-| DELETE | `/api/notes/:id`           | Not sil                | Evet |
-| GET    | `/api/notes/search?query=` | Notlarda ara           | Evet |
-| GET    | `/api/notes/query?tag=`    | Tag'e göre filtrele    | Evet |
-| GET    | `/api/notes/favorites`     | Favori notları listele | Evet |
-| POST   | `/api/notes/favorites/:id` | Favorilere ekle        | Evet |
-| DELETE | `/api/notes/favorites/:id` | Favorilerden çıkar     | Evet |
+| Method | Endpoint                      | Aciklama               | Auth |
+| ------ | ----------------------------- | ---------------------- | ---- |
+| GET    | `/api/v1/notes`               | Tum notlari listele    | Evet |
+| POST   | `/api/v1/notes`               | Yeni not olustur       | Evet |
+| GET    | `/api/v1/notes/:id`           | Tek not getir          | Evet |
+| PUT    | `/api/v1/notes/:id`           | Not guncelle           | Evet |
+| DELETE | `/api/v1/notes/:id`           | Not sil                | Evet |
+| GET    | `/api/v1/notes/search?query=` | Notlarda ara           | Evet |
+| GET    | `/api/v1/notes/query?tag=`    | Tag'e gore filtrele    | Evet |
+| GET    | `/api/v1/notes/favorites`     | Favori notlari listele | Evet |
+| POST   | `/api/v1/notes/favorites/:id` | Favorilere ekle        | Evet |
+| DELETE | `/api/v1/notes/favorites/:id` | Favorilerden cikar     | Evet |
 
 #### Create Note
 
 ```
-POST /api/notes
+POST /api/v1/notes
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -176,7 +179,7 @@ Content-Type: application/json
 #### Update Note
 
 ```
-PUT /api/notes/:id
+PUT /api/v1/notes/:id
 Authorization: Bearer <token>
 Content-Type: application/json
 
@@ -193,8 +196,9 @@ Content-Type: application/json
 ```
 note-app-backend/
 ├── config/
-│   ├── db.js           # MongoDB bağlantısı
-│   └── env.js          # Ortam değişkenleri
+│   ├── db.js           # MongoDB baglantisi
+│   ├── env.js          # Ortam degiskenleri
+│   └── swagger.js      # Swagger konfigurasyonu
 ├── controllers/
 │   ├── auth.controller.js
 │   ├── note.controller.js
