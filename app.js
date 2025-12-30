@@ -30,6 +30,10 @@ app.use(
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '10mb' }));
+
+// Swagger (Helmet'ten once tanimlanmali)
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 app.use(helmet());
 app.use(requestLogger);
 
@@ -48,9 +52,6 @@ app.use(rateLimiter);
 app.get('/', (req, res) => {
     res.status(200).send({ message: 'Hello World' });
 });
-
-// Swagger
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/v1/users', userRoutes);
 app.use('/api/v1/auth', authRoutes);
