@@ -26,9 +26,15 @@ const options = {
                 User: {
                     type: 'object',
                     properties: {
-                        _id: { type: 'string', example: '507f1f77bcf86cd799439011' },
-                        name: { type: 'string', example: 'Ahmet' },
-                        email: { type: 'string', example: 'ahmet@example.com' },
+                        _id: {
+                            type: 'string',
+                            example: '507f1f77bcf86cd799439011',
+                        },
+                        name: { type: 'string', example: 'example' },
+                        email: {
+                            type: 'string',
+                            example: 'example@example.com',
+                        },
                         isVerified: { type: 'boolean', example: false },
                         createdAt: { type: 'string', format: 'date-time' },
                         updatedAt: { type: 'string', format: 'date-time' },
@@ -37,11 +43,21 @@ const options = {
                 Note: {
                     type: 'object',
                     properties: {
-                        _id: { type: 'string', example: '507f1f77bcf86cd799439011' },
-                        title: { type: 'string', example: 'Not Başlığı' },
-                        content: { type: 'string', example: 'Not içeriği...' },
-                        userId: { type: 'string', example: '507f1f77bcf86cd799439011' },
-                        tags: { type: 'array', items: { type: 'string' }, example: ['kisisel', 'is'] },
+                        _id: {
+                            type: 'string',
+                            example: '507f1f77bcf86cd799439011',
+                        },
+                        title: { type: 'string', example: 'Note Title' },
+                        content: { type: 'string', example: 'Note Content...' },
+                        userId: {
+                            type: 'string',
+                            example: '507f1f77bcf86cd799439011',
+                        },
+                        tags: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            example: ['personel', 'work'],
+                        },
                         color: { type: 'string', example: '#FF5733' },
                         isFavorites: { type: 'boolean', example: false },
                         createdAt: { type: 'string', format: 'date-time' },
@@ -52,26 +68,58 @@ const options = {
                     type: 'object',
                     required: ['name', 'email', 'password'],
                     properties: {
-                        name: { type: 'string', minLength: 3, example: 'Ahmet' },
-                        email: { type: 'string', format: 'email', example: 'ahmet@example.com' },
-                        password: { type: 'string', minLength: 8, example: '12345678' },
+                        name: {
+                            type: 'string',
+                            minLength: 3,
+                            example: 'example',
+                        },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            example: 'example@example.com',
+                        },
+                        password: {
+                            type: 'string',
+                            minLength: 8,
+                            example: '12345678',
+                        },
                     },
                 },
                 LoginRequest: {
                     type: 'object',
                     required: ['email', 'password'],
                     properties: {
-                        email: { type: 'string', format: 'email', example: 'ahmet@example.com' },
-                        password: { type: 'string', minLength: 8, example: '12345678' },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            example: 'example@example.com',
+                        },
+                        password: {
+                            type: 'string',
+                            minLength: 8,
+                            example: '12345678',
+                        },
                     },
                 },
                 CreateNoteRequest: {
                     type: 'object',
                     required: ['title', 'content'],
                     properties: {
-                        title: { type: 'string', minLength: 3, example: 'Not Başlığı' },
-                        content: { type: 'string', minLength: 10, example: 'Not içeriği burada yer alacak...' },
-                        tags: { type: 'array', items: { type: 'string' }, example: ['kisisel'] },
+                        title: {
+                            type: 'string',
+                            minLength: 3,
+                            example: 'Note Title',
+                        },
+                        content: {
+                            type: 'string',
+                            minLength: 10,
+                            example: 'Note Content...',
+                        },
+                        tags: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            example: ['personal'],
+                        },
                         color: { type: 'string', example: '#FF5733' },
                     },
                 },
@@ -79,9 +127,20 @@ const options = {
                     type: 'object',
                     required: ['title'],
                     properties: {
-                        title: { type: 'string', minLength: 3, example: 'Güncel Başlık' },
-                        content: { type: 'string', example: 'Güncel içerik...' },
-                        tags: { type: 'array', items: { type: 'string' }, example: ['guncellenmis'] },
+                        title: {
+                            type: 'string',
+                            minLength: 3,
+                            example: 'New Title',
+                        },
+                        content: {
+                            type: 'string',
+                            example: 'New Note Content...',
+                        },
+                        tags: {
+                            type: 'array',
+                            items: { type: 'string' },
+                            example: ['updated'],
+                        },
                         color: { type: 'string', example: '#3498DB' },
                     },
                 },
@@ -89,14 +148,22 @@ const options = {
                     type: 'object',
                     required: ['name', 'email'],
                     properties: {
-                        name: { type: 'string', minLength: 3, example: 'Yeni Ad' },
-                        email: { type: 'string', format: 'email', example: 'yeni@example.com' },
+                        name: {
+                            type: 'string',
+                            minLength: 3,
+                            example: 'New Name',
+                        },
+                        email: {
+                            type: 'string',
+                            format: 'email',
+                            example: 'new@example.com',
+                        },
                     },
                 },
                 Error: {
                     type: 'object',
                     properties: {
-                        message: { type: 'string', example: 'Hata mesajı' },
+                        message: { type: 'string', example: 'Error message' },
                     },
                 },
             },
@@ -108,4 +175,3 @@ const options = {
 const swaggerSpec = swaggerJsdoc(options);
 
 export default swaggerSpec;
-
