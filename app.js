@@ -48,9 +48,9 @@ app.get('/', (req, res) => {
     console.log('Hello World');
 });
 
-app.use('/api/users', userRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/notes', noteRoutes);
+app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/notes', noteRoutes);
 
 // Error Middlewares
 app.use(notFoundMiddleware);
