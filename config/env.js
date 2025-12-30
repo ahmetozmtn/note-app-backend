@@ -6,7 +6,7 @@ dotenv.config();
 
 export const NODE_ENV = process.env.NODE_ENV || 'development';
 export const PORT = process.env.PORT;
-export const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:5000';
+export const CORS_ORIGIN = process.env.CORS_ORIGIN || 'http://localhost:3000';
 export const COOKIE_SAME_SITE = process.env.COOKIE_SAME_SITE || 'strict';
 
 // MongoDB configuration
