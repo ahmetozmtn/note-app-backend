@@ -10,6 +10,7 @@ import {
     searchNotes,
     addFavoritesNotes,
     favoriteNotes,
+    removeFavoritesNotes,
 } from '../controllers/note.controller.js';
 import {
     validationMiddleware,

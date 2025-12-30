@@ -182,7 +182,6 @@ export const passwordResetConfirmation = async (req, res, next) => {
     }
 };
 
-// Refresh token ile yeni access token al
 export const refreshAccessToken = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
@@ -191,7 +190,6 @@ export const refreshAccessToken = async (req, res, next) => {
             return res.status(401).json({ message: 'Refresh token not found' });
         }
 
-        // Token'ı doğrula
         let decoded;
         try {
             decoded = verifyRefreshToken(refreshToken);
@@ -201,7 +199,6 @@ export const refreshAccessToken = async (req, res, next) => {
                 .json({ message: 'Invalid or expired refresh token' });
         }
 
-        // Token hash'ini kontrol et
         const tokenHash = hashToken(refreshToken);
         const storedToken = await RefreshToken.findOne({
             userId: decoded.id,
@@ -212,26 +209,21 @@ export const refreshAccessToken = async (req, res, next) => {
             return res.status(401).json({ message: 'Refresh token not found' });
         }
 
-        // Token süresi dolmuş mu kontrol et
         if (storedToken.isExpired()) {
             await storedToken.deleteOne();
             return res.status(401).json({ message: 'Refresh token expired' });
         }
 
-        // Kullanıcıyı kontrol et
         const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Eski refresh token'ı sil
         await storedToken.deleteOne();
 
-        // Yeni access ve refresh token oluştur
         const newAccessToken = generateToken({ id: user._id });
         const newRefreshToken = await createAndSaveRefreshToken(user._id);
 
-        // Yeni refresh token'ı cookie'ye yaz
         res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
         return res.status(200).json({
@@ -245,7 +237,7 @@ export const refreshAccessToken = async (req, res, next) => {
     }
 };
 
-// Logout - Refresh token'ı sil
+// Logout
 export const logout = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
@@ -255,7 +247,6 @@ export const logout = async (req, res, next) => {
             await RefreshToken.findOneAndDelete({ tokenHash });
         }
 
-        // Cookie'yi temizle
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: COOKIE_SECURE,
@@ -271,15 +262,12 @@ export const logout = async (req, res, next) => {
     }
 };
 
-// Tüm cihazlardan çıkış yap (tüm refresh token'ları sil)
 export const logoutAll = async (req, res, next) => {
     try {
         const userId = req.user.id;
-
-        // Kullanıcının tüm refresh token'larını sil
+        // Revoke all user tokens
         await RefreshToken.revokeAllUserTokens(userId);
 
-        // Cookie'yi temizle
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: COOKIE_SECURE,
