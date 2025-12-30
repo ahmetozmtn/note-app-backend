@@ -20,6 +20,7 @@ import {
     EMAIL_USER,
     EMAIL_PASSWORD,
     PORT,
+    BASE_URL,
 } from '../config/env.js';
 
 const transporter = nodemailer.createTransport({
@@ -33,7 +34,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export async function sendVerificationEmail(to, token) {
-    const link = `http://localhost:${PORT}/api/auth/verify?token=${token}`;
+    const link = `${BASE_URL}:${PORT}/api/auth/verify?token=${token}`;
 
     let verificationTemplate = fs.readFileSync(
         verificationTemplatePath,
@@ -53,7 +54,7 @@ export async function sendVerificationEmail(to, token) {
 }
 
 export async function sendPasswordResetEmail(to, token) {
-    const link = `http://localhost:${PORT}/api/auth/reset-password-confirmation?token=${token}`;
+    const link = `${BASE_URL}:${PORT}/api/auth/reset-password-confirmation?token=${token}`;
     let passwordResetTemplate = fs.readFileSync(
         passwordResetTemplatePath,
         'utf8'
