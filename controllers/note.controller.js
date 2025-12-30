@@ -12,6 +12,7 @@ export const createNote = async (req, res, next) => {
             userId: req.user.id,
         });
         res.status(201).json({
+            success: true,
             message: 'Note created',
             data: note,
         });
@@ -25,6 +26,7 @@ export const getNotes = async (req, res, next) => {
     try {
         const notes = await Note.find({ userId: req.user.id });
         res.status(200).json({
+            success: true,
             message: 'Notes fetched',
             data: notes,
         });
@@ -34,14 +36,16 @@ export const getNotes = async (req, res, next) => {
 };
 
 // Note Get By Id
-
 export const getNoteById = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Note not found' });
         }
         res.status(200).json({
+            success: true,
             message: 'Note fetched',
             data: note,
         });
@@ -51,12 +55,13 @@ export const getNoteById = async (req, res, next) => {
 };
 
 // Note Update
-
 export const updateNote = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Note not found' });
         }
         const { title, content, tags, color } = req.body;
         const updatedNote = await Note.findByIdAndUpdate(
@@ -70,6 +75,7 @@ export const updateNote = async (req, res, next) => {
             { new: true }
         );
         res.status(200).json({
+            success: true,
             message: 'Note updated',
             data: updatedNote,
         });
@@ -79,37 +85,38 @@ export const updateNote = async (req, res, next) => {
 };
 
 // Note Delete
-
 export const deleteNote = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Note not found' });
         }
         await Note.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: 'Note deleted' });
+        res.status(200).json({
+            success: true,
+            message: 'Note deleted',
+            data: null,
+        });
     } catch (error) {
         next(error);
     }
 };
 
 // Note Query
-
 export const queryNotes = async (req, res, next) => {
     try {
         const { tag } = req.query;
         if (!tag) {
-            return res.status(400).json({ message: 'Tags are required' });
+            return res
+                .status(400)
+                .json({ success: false, message: 'Tags are required' });
         }
         const notes = await Note.find({ tags: { $in: tag } });
-        if (notes.length === 0) {
-            return res.status(200).json({
-                message: 'No notes found',
-                data: [],
-            });
-        }
         res.status(200).json({
-            message: 'Notes fetched',
+            success: true,
+            message: notes.length === 0 ? 'No notes found' : 'Notes fetched',
             data: notes,
         });
     } catch (error) {
@@ -118,12 +125,13 @@ export const queryNotes = async (req, res, next) => {
 };
 
 // Search Notes
-
 export const searchNotes = async (req, res, next) => {
     try {
         const { query } = req.query;
         if (!query) {
-            return res.status(400).json({ message: 'Query is required' });
+            return res
+                .status(400)
+                .json({ success: false, message: 'Query is required' });
         }
         const notes = await Note.find({
             $or: [
@@ -132,14 +140,9 @@ export const searchNotes = async (req, res, next) => {
             ],
             userId: req.user.id,
         });
-        if (notes.length === 0) {
-            return res.status(200).json({
-                message: 'No notes found',
-                data: [],
-            });
-        }
         res.status(200).json({
-            message: 'Notes fetched',
+            success: true,
+            message: notes.length === 0 ? 'No notes found' : 'Notes fetched',
             data: notes,
         });
     } catch (error) {
@@ -148,21 +151,18 @@ export const searchNotes = async (req, res, next) => {
 };
 
 // Note Favorite
-
 export const favoriteNotes = async (req, res, next) => {
     try {
         const notes = await Note.find({
             userId: req.user.id,
             isFavorites: true,
         });
-        if (notes.length === 0) {
-            return res.status(200).json({
-                message: 'No favorite notes found',
-                data: [],
-            });
-        }
-        return res.status(200).json({
-            message: 'Favorite notes fetched',
+        res.status(200).json({
+            success: true,
+            message:
+                notes.length === 0
+                    ? 'No favorite notes found'
+                    : 'Favorite notes fetched',
             data: notes,
         });
     } catch (error) {
@@ -173,12 +173,17 @@ export const favoriteNotes = async (req, res, next) => {
 export const addFavoritesNotes = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
-        console.log(note);
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Note not found' });
         }
         await note.updateOne({ isFavorites: true });
-        return res.status(200).json({ message: 'Note added to favorites' });
+        return res.status(200).json({
+            success: true,
+            message: 'Note added to favorites',
+            data: null,
+        });
     } catch (error) {
         next(error);
     }
@@ -188,10 +193,16 @@ export const removeFavoritesNotes = async (req, res, next) => {
     try {
         const note = await Note.findById(req.params.id);
         if (!note) {
-            return res.status(404).json({ message: 'Note not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'Note not found' });
         }
         await note.updateOne({ isFavorites: false });
-        return res.status(200).json({ message: 'Note removed from favorites' });
+        return res.status(200).json({
+            success: true,
+            message: 'Note removed from favorites',
+            data: null,
+        });
     } catch (error) {
         next(error);
     }

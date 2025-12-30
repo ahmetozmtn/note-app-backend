@@ -50,7 +50,9 @@ export const register = async (req, res, next) => {
         const { name, email, password } = req.body;
         const userMailCheck = await User.findOne({ email });
         if (userMailCheck) {
-            return res.status(409).json({ message: 'Email already exists' });
+            return res
+                .status(409)
+                .json({ success: false, message: 'Email already exists' });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const user = await User.create({
@@ -69,11 +71,13 @@ export const register = async (req, res, next) => {
         res.cookie('refreshToken', refreshToken, cookieOptions);
 
         res.status(201).json({
+            success: true,
             message: 'User registered',
             data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                isVerified: user.isVerified,
                 accessToken,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
@@ -91,14 +95,14 @@ export const login = async (req, res, next) => {
         if (!user) {
             return res
                 .status(401)
-                .json({ message: 'Invalid email or password' });
+                .json({ success: false, message: 'Invalid email or password' });
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res
                 .status(401)
-                .json({ message: 'Invalid email or password' });
+                .json({ success: false, message: 'Invalid email or password' });
         }
 
         const accessToken = generateToken({ id: user._id });
@@ -108,12 +112,16 @@ export const login = async (req, res, next) => {
         res.cookie('refreshToken', refreshToken, cookieOptions);
 
         return res.status(200).json({
+            success: true,
             message: 'Login successful',
             data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
+                isVerified: user.isVerified,
                 accessToken,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
             },
         });
     } catch (error) {
@@ -131,10 +139,13 @@ export const verifyEmail = async (req, res, next) => {
             { new: true }
         ).select('-password');
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'User not found' });
         }
 
         return res.status(200).json({
+            success: true,
             message: 'Email verified',
             data: user,
         });
@@ -148,12 +159,16 @@ export const passwordResetEmailSend = async (req, res, next) => {
         const { email } = req.body;
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'User not found' });
         }
         const emailToken = generateEmailToken({ id: user._id });
         await sendPasswordResetEmail(email, emailToken);
         return res.status(200).json({
+            success: true,
             message: 'Password reset email sent',
+            data: null,
         });
     } catch (error) {
         next(error);
@@ -172,10 +187,14 @@ export const passwordResetConfirmation = async (req, res, next) => {
             { new: true }
         ).select('-password');
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'User not found' });
         }
         return res.status(200).json({
+            success: true,
             message: 'Password reset successful',
+            data: null,
         });
     } catch (error) {
         next(error);
@@ -187,16 +206,19 @@ export const refreshAccessToken = async (req, res, next) => {
         const refreshToken = req.cookies.refreshToken;
 
         if (!refreshToken) {
-            return res.status(401).json({ message: 'Refresh token not found' });
+            return res
+                .status(401)
+                .json({ success: false, message: 'Refresh token not found' });
         }
 
         let decoded;
         try {
             decoded = verifyRefreshToken(refreshToken);
         } catch {
-            return res
-                .status(401)
-                .json({ message: 'Invalid or expired refresh token' });
+            return res.status(401).json({
+                success: false,
+                message: 'Invalid or expired refresh token',
+            });
         }
 
         const tokenHash = hashToken(refreshToken);
@@ -206,17 +228,23 @@ export const refreshAccessToken = async (req, res, next) => {
         });
 
         if (!storedToken) {
-            return res.status(401).json({ message: 'Refresh token not found' });
+            return res
+                .status(401)
+                .json({ success: false, message: 'Refresh token not found' });
         }
 
         if (storedToken.isExpired()) {
             await storedToken.deleteOne();
-            return res.status(401).json({ message: 'Refresh token expired' });
+            return res
+                .status(401)
+                .json({ success: false, message: 'Refresh token expired' });
         }
 
         const user = await User.findById(decoded.id);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res
+                .status(404)
+                .json({ success: false, message: 'User not found' });
         }
 
         await storedToken.deleteOne();
@@ -227,6 +255,7 @@ export const refreshAccessToken = async (req, res, next) => {
         res.cookie('refreshToken', newRefreshToken, cookieOptions);
 
         return res.status(200).json({
+            success: true,
             message: 'Token refreshed successfully',
             data: {
                 accessToken: newAccessToken,
@@ -255,7 +284,9 @@ export const logout = async (req, res, next) => {
         });
 
         return res.status(200).json({
+            success: true,
             message: 'Logged out successfully',
+            data: null,
         });
     } catch (error) {
         next(error);
@@ -276,7 +307,9 @@ export const logoutAll = async (req, res, next) => {
         });
 
         return res.status(200).json({
+            success: true,
             message: 'Logged out from all devices successfully',
+            data: null,
         });
     } catch (error) {
         next(error);
