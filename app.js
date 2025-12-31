@@ -50,7 +50,17 @@ const rateLimiter = expressRate({
 app.use(rateLimiter);
 
 app.get('/', (req, res) => {
-    res.status(200).send({ message: 'Hello World' });
+    res.status(200).send({
+        success: true,
+        message: 'api is running, check /api-docs for documentation',
+    });
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).send({
+        success: true,
+        message: 'api is running',
+    });
 });
 
 app.use('/api/v1/users', userRoutes);
