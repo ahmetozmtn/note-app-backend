@@ -62,8 +62,17 @@ npm install
 # Geliştirme modunda çalıştır
 npm run dev
 
-# Production modunda çalıştır
+# Production modunda calistir
 npm start
+
+# Testleri calistir
+npm test
+
+# Watch modunda testler
+npm run test:watch
+
+# Test coverage raporu
+npm run test:coverage
 ```
 
 ### Docker ile Kurulum
