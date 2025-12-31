@@ -6,7 +6,7 @@ Not uygulaması için RESTful API servisi. Kullanıcı kimlik doğrulama, not y�
 
 - **Runtime:** Node.js 22
 - **Framework:** Express.js 5
-- **Veritabanı:** MongoDB 7 (Mongoose ODM)
+- **Veritabanı:** MongoDB (Mongoose ODM)
 - **Kimlik Doğrulama:** JWT (Access Token + Refresh Token)
 - **Validasyon:** Zod
 - **Email:** Nodemailer
