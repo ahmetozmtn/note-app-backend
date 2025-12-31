@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: '10mb' }));
 
-// Swagger (Helmet'ten once tanimlanmali)
+// Swagger
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(helmet());
