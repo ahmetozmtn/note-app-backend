@@ -26,7 +26,7 @@ CMD ["npm", "run", "dev"]
 # Builder stage (for production dependencies)
 FROM base AS builder
 
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # Production stage
 FROM node:22-alpine AS production
