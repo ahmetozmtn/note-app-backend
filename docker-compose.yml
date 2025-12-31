@@ -1,55 +1,54 @@
 services:
-  # MongoDB Database
-  mongodb:
-    image: mongo:7
-    container_name: note-app-mongodb
-    restart: unless-stopped
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password123}
-      MONGO_INITDB_DATABASE: noteapp
-    volumes:
-      - mongodb_data:/data/db
-    ports:
-      - "27017:27017"
-    networks:
-      - note-app-network
-    healthcheck:
-      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
+    # MongoDB Database
+    mongodb:
+        image: mongo:latest
+        container_name: note-app-mongodb
+        restart: unless-stopped
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME:-admin}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-password123}
+            MONGO_INITDB_DATABASE: noteapp
+        volumes:
+            - mongodb_data:/data/db
+        ports:
+            - '27017:27017'
+        networks:
+            - note-app-network
+        healthcheck:
+            test: ['CMD', 'mongosh', '--eval', "db.adminCommand('ping')"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+            start_period: 10s
 
-  # Node.js API
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: note-app-api
-    restart: unless-stopped
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=production
-      - MONGO_URI=mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/noteapp?authSource=admin
-    ports:
-      - "${PORT:-5000}:5000"
-    depends_on:
-      mongodb:
-        condition: service_healthy
-    networks:
-      - note-app-network
-    volumes:
-      - app_logs:/app/logs
+    # Node.js API
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: note-app-api
+        restart: unless-stopped
+        env_file:
+            - .env
+        environment:
+            - NODE_ENV=production
+            - MONGO_URI=mongodb://${MONGO_ROOT_USERNAME:-admin}:${MONGO_ROOT_PASSWORD:-password123}@mongodb:27017/noteapp?authSource=admin
+        ports:
+            - '${PORT:-5000}:5000'
+        depends_on:
+            mongodb:
+                condition: service_healthy
+        networks:
+            - note-app-network
+        volumes:
+            - app_logs:/app/logs
 
 networks:
-  note-app-network:
-    driver: bridge
+    note-app-network:
+        driver: bridge
 
 volumes:
-  mongodb_data:
-    driver: local
-  app_logs:
-    driver: local
-
+    mongodb_data:
+        driver: local
+    app_logs:
+        driver: local
