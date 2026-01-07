@@ -44,6 +44,20 @@ export const paramsIdSchema = z
     })
     .strict();
 
+export const changePasswordSchema = z
+    .object({
+        currentPassword: z.string().trim().min(8, {
+            message: 'Old password must be at least 8 characters long',
+        }),
+        newPassword: z.string().trim().min(8, {
+            message: 'New password must be at least 8 characters long',
+        }),
+        confirmPassword: z.string().trim().min(8, {
+            message: 'Confirm password must be at least 8 characters long',
+        }),
+    })
+    .strict();
+
 // --- Note Schemas ---
 
 export const createNoteSchema = z

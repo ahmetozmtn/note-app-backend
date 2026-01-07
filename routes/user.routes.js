@@ -1,13 +1,21 @@
 import express from 'express';
 
-import { getUser, updateUser } from '../controllers/user.controller.js';
+import {
+    getUser,
+    updateUser,
+    changePassword,
+} from '../controllers/user.controller.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
 import { userMiddleware } from '../middlewares/user.middleware.js';
 import {
     validationMiddleware,
     validationMiddlewareParams,
 } from '../middlewares/validation.middleware.js';
-import { updateUserSchema, paramsIdSchema } from '../validation/validation.js';
+import {
+    updateUserSchema,
+    paramsIdSchema,
+    changePasswordSchema,
+} from '../validation/validation.js';
 
 const router = express.Router();
 
@@ -98,6 +106,24 @@ router.put(
     userMiddleware,
     validationMiddleware(updateUserSchema),
     updateUser
+);
+
+/**
+ * @swagger
+ * /users/{id}/change-password:
+ *   put:
+ *     tags: [Users]
+ *     summary: Kullanici sifresini guncelle
+ *     security:
+ *       - bearerAuth: []
+ */
+router.put(
+    '/:id/change-password',
+    authMiddleware,
+    validationMiddlewareParams(paramsIdSchema),
+    userMiddleware,
+    validationMiddleware(changePasswordSchema),
+    changePassword
 );
 
 export default router;
